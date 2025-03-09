@@ -1,9 +1,15 @@
 from fastapi import FastAPI, HTTPException #biar kalo ada error responnya rapi#
 from .weather import get_weather_data  # Mengimpor fungsi get_weather_data
+from .routes import router
+
 import requests
 import os
 
+
 app = FastAPI()
+
+# Daftarkan routes
+app.include_router(router)
 
 # Menggunakan environment variable untuk API key (lebih aman)
 API_KEY = os.getenv("OPENWEATHER_API_KEY", "d41e85c52a44f59f36b051b3fdb663d5")
