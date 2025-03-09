@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException #biar kalo ada error responnya rapi#
 import requests
+import os
 
 app = FastAPI()
 
