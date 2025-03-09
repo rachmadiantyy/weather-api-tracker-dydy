@@ -22,13 +22,16 @@ def get_weather_data(city: str) -> WeatherResponse:
         data = response.json()
         
         # Mengembalikan data cuaca yang diperlukan
-        return WeatherResponse(
-            city=data["name"],
-            temperature=data["main"]["temp"],
-            weather=data["weather"][0]["description"],
-            humidity=data["main"]["humidity"],
-            wind_speed=data["wind"]["speed"]
-        )
-    
+        if "weather" in data and "main" in data:
+            return WeatherResponse(
+                city=data["name"],
+                temperature=data["main"]["temp"],
+                weather=data["weather"][0]["description"],
+                humidity=data["main"]["humidity"],
+                wind_speed=data["wind"]["speed"]
+            )
+        else:
+            return None  # Jika tidak ada data cuaca
+        
     except requests.exceptions.RequestException as e:
         return None  # Kembalikan None jika terjadi error
