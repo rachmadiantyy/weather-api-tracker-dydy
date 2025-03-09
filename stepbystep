@@ -1,0 +1,8 @@
+Buat Virtual Environment (API)
+python3 -m venv venv
+venv\Scripts\activate #pakai linux#
+pip install --upgrade pip 
+pip install fastapi uvicorn requests
+
+*melihat hasilnya*
+python -c 'import fastapi, uvicorn, requests; print("FastAPI, Uvicorn, dan Requests siap!")'
