@@ -15,7 +15,7 @@ app.include_router(router)
 API_KEY = os.getenv("OPENWEATHER_API_KEY", "d41e85c52a44f59f36b051b3fdb663d5")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
-@app.get("/")
+@app.get("/", operation_id="root_get_message") #operation id agar tidak duplikat pada endpoint
 def read_root():
     """
     Endpoint utama yang mengembalikan pesan selamat datang.
