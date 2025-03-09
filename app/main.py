@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from .routes import router  # Import routes from routes.py
 from .config import settings  # Import configuration (API keys, etc.)
+from app.routes import router  # Import routes dari routes.py
+
 
 app = FastAPI()
 
