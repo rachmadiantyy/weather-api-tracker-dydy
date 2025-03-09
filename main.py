@@ -5,7 +5,7 @@ import os
 app = FastAPI()
 
 # Menggunakan environment variable untuk API key (lebih aman)
-API_KEY = os.getenv("OPENWEATHER_API_KEY", "a82c2af37ad2faf45c49462cb034994e")
+API_KEY = os.getenv("OPENWEATHER_API_KEY", "d41e85c52a44f59f36b051b3fdb663d5")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 @app.get("/")
