@@ -1,6 +1,7 @@
 1. Buat Virtual Environment (API)
 python3 -m venv venv
 venv\Scripts\activate #pakai linux#
+source venv/bin/activate  # Untuk Linux/macOS
 pip install --upgrade pip 
 pip install fastapi uvicorn requests
 
@@ -8,5 +9,11 @@ pip install fastapi uvicorn requests
 python -c 'import fastapi, uvicorn, requests; print("FastAPI, Uvicorn, dan Requests siap!")'
 
 2. Buat file utama untuk aplikasi FastAPI
-
+*run menggunakan ini*
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+3. Buat endpoint untuk ambil data cuaca
+aku ambil disini hehe https://openweathermap.org/
+buat akun, terus dapet deh api-key nya
+
+
