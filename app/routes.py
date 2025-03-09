@@ -1,16 +1,15 @@
-#kode yang akan mendefinisikan endpoint
 from fastapi import APIRouter, HTTPException
-from .weather import get_weather_data
+from .services import get_weather_data
+from .models import WeatherResponse
 
 router = APIRouter()
 
-@router.get("/weather/{city}")
+@router.get("/weather/{city}", response_model=WeatherResponse, operation_id="get_weather_by_city")
 def get_weather(city: str):
     """
     Mengambil data cuaca berdasarkan nama kota.
     """
-    try:
-        weather_data = get_weather_data(city)
+    weather_data = get_weather_data(city)
+    if weather_data:
         return weather_data
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+    raise HTTPException(status_code=404, detail="Kota tidak ditemukan")
