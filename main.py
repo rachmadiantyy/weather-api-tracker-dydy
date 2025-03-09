@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException #biar kalo ada error responnya rapi#
+from .weather import get_weather_data  # Mengimpor fungsi get_weather_data
 import requests
 import os
 
