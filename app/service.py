@@ -2,7 +2,7 @@ import requests
 import os
 from .models import WeatherResponse
 
-API_KEY = os.getenv("OPENWEATHER_API_KEY")
+API_KEY = os.getenv("OPENWEATHER_API_KEY","a82c2af37ad2faf45c49462cb034994e")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 def get_weather_data(city: str) -> WeatherResponse:
