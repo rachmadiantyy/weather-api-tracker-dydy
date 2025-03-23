@@ -32,29 +32,30 @@ pipeline {
             }
         }
 
-        stage('Deploy to Server') {
-            steps {
-                echo "Preparing deploy script..."
-                script {
-                    def deployScript = """
-                    #!/bin/bash
-                    docker login -u "$DOCKERHUB_USER" --password-stdin <<< "$DOCKERHUB_TOKEN"
-                    docker pull $IMAGE_NAME
-                    docker stop weather-api || true
-                    docker rm weather-api || true
-                    docker run -d --name weather-api -p 8000:8000 --restart always $IMAGE_NAME
-                    """
+       stage('Deploy to Server') {
+    steps {
+        echo "Preparing deploy script..."
+        script {
+            def deployScript = """
+            #!/bin/bash
+            docker login -u "$DOCKERHUB_USER" --password-stdin <<< "$DOCKERHUB_TOKEN"
+            docker pull $IMAGE_NAME
+            docker stop weather-api || true
+            docker rm weather-api || true
+            docker run -d --name weather-api -p 8000:8000 --restart always $IMAGE_NAME
+            """
 
-                    writeFile file: 'deploy.sh', text: deployScript
-                    sh 'chmod +x deploy.sh'
+            writeFile file: 'deploy.sh', text: deployScript
+            sh 'chmod +x deploy.sh'
 
-                    echo "Copying deploy script to server..."
-                    sh 'scp -o StrictHostKeyChecking=no deploy.sh root@116.204.251.227:/root/deploy.sh'
+            echo "Copying deploy script to server..."
+            sh 'scp -o StrictHostKeyChecking=no deploy.sh root@116.204.251.227:/root/deploy.sh'
 
-                    echo "Executing deploy script on server..."
-                    sh 'ssh -o StrictHostKeyChecking=no root@116.204.251.227 "bash /root/deploy.sh"'
-                }
-            }
+            echo "Executing deploy script on server..."
+            sh 'ssh -o StrictHostKeyChecking=no root@116.204.251.227 "bash /root/deploy.sh"'
         }
+    }
+}
+
     }
 }
