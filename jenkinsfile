@@ -34,11 +34,11 @@ pipeline {
                 sshagent(['server-ssh']) {  // Sesuai dengan credential SSH di Jenkins
                     sh '''
                     ssh -o StrictHostKeyChecking=no root@116.204.251.227 <<EOF
-                    docker login -u "$DOCKERHUB_USER" --password "$DOCKERHUB_TOKEN"
-                    docker pull $IMAGE_NAME
-                    docker stop weather-api || true
-                    docker rm weather-api || true
-                    docker run -d --name weather-api -p 8000:8000 --restart always $IMAGE_NAME
+                        docker login -u "$DOCKERHUB_USER" --password-stdin <<< "$DOCKERHUB_TOKEN"
+                        docker pull $IMAGE_NAME
+                        docker stop weather-api || true
+                        docker rm weather-api || true
+                        docker run -d --name weather-api -p 8000:8000 --restart always $IMAGE_NAME
                     EOF
                     '''
                 }
