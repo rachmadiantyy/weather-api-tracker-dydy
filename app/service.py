@@ -1,8 +1,13 @@
 import requests
 import os
+import logging
 from .models import WeatherResponse
 
-API_KEY = os.getenv("OPENWEATHER_API_KEY","9e469a336cc7ed95387acd98babd13b2")
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+API_KEY = os.getenv("OPENWEATHER_API_KEY", "9e469a336cc7ed95387acd98babd13b2")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 def get_weather_data(city: str) -> WeatherResponse:
@@ -21,17 +26,19 @@ def get_weather_data(city: str) -> WeatherResponse:
         
         data = response.json()
         
-        # Mengembalikan data cuaca yang diperlukan
-        if "weather" in data and "main" in data:
+        # Pastikan data memiliki struktur yang benar
+        if all(k in data for k in ("name", "main", "weather", "wind")):
             return WeatherResponse(
                 city=data["name"],
-                temperature=data["main"]["temp"],
-                weather=data["weather"][0]["description"],
-                humidity=data["main"]["humidity"],
-                wind_speed=data["wind"]["speed"]
+                temperature=data["main"].get("temp", 0),  # Gunakan .get untuk menghindari KeyError
+                weather=data["weather"][0].get("description", "Unknown"),
+                humidity=data["main"].get("humidity", 0),
+                wind_speed=data["wind"].get("speed", 0)
             )
         else:
-            return None  # Jika tidak ada data cuaca
+            logger.error(f"Data tidak lengkap untuk kota {city}: {data}")
+            return None  # Data tidak valid
         
     except requests.exceptions.RequestException as e:
-        return None  # Kembalikan None jika terjadi error
+        logger.error(f"Error mengambil data cuaca untuk {city}: {str(e)}")
+        return None  # Jika terjadi error
