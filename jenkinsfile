@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "rachmadiantyy/weather-api-tracker-dydy"
+        DOCKERHUB_USER = "rachmadiantyy"
+        DOCKERHUB_TOKEN = credentials('docker-hub-token')  // Sesuai dengan credential ID di Jenkins
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/rachmadiantyy/weather-api-tracker-dydy.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                sh '''
+                echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+                docker push $IMAGE_NAME
+                '''
+            }
+        }
+
+        stage('Deploy to Server') {
+            steps {
+                sshagent(['server-ssh']) {  // Sesuai dengan credential SSH di Jenkins
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no root@116.204.251.227 <<EOF
+                    docker login -u "$DOCKERHUB_USER" --password "$DOCKERHUB_TOKEN"
+                    docker pull $IMAGE_NAME
+                    docker stop weather-api || true
+                    docker rm weather-api || true
+                    docker run -d --name weather-api -p 8000:8000 --restart always $IMAGE_NAME
+                    EOF
+                    '''
+                }
+            }
+        }
+    }
+}
