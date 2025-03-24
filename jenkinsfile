@@ -4,10 +4,6 @@ pipeline {
     environment {
         IMAGE_NAME = "rachmadiantyy/weather-api-tracker-dydy"
         DOCKERHUB_USER = "rachmadiantyy"
-<<<<<<< HEAD
-        DOCKERHUB_TOKEN = credentials('docker-hub-token')  // Sesuai dengan credential ID di Jenkins
-=======
->>>>>>> d7e0363 (update)
     }
 
     stages {
@@ -21,61 +17,40 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image..."
-                sh 'docker build -t $IMAGE_NAME .'
+                script {
+                    def IMAGE_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.IMAGE_FULL_NAME = "${IMAGE_NAME}:${IMAGE_TAG}"
+                }
+                sh 'docker build --no-cache --pull -t $IMAGE_FULL_NAME .'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
                 echo "Pushing Docker image to Docker Hub..."
-                sh '''
-                echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
-                docker push $IMAGE_NAME
-                '''
+                withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKERHUB_TOKEN')]) {
+                    sh '''
+                    echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+                    docker push $IMAGE_FULL_NAME
+                    '''
+                }
             }
         }
 
-<<<<<<< HEAD
-       stage('Deploy to Server') {
-    steps {
-        echo "Preparing deploy script..."
-        script {
-            def deployScript = """
-            #!/bin/bash
-            docker login -u "$DOCKERHUB_USER" --password-stdin <<< "$DOCKERHUB_TOKEN"
-            docker pull $IMAGE_NAME
-            docker stop weather-api || true
-            docker rm weather-api || true
-            docker run -d --name weather-api -p 8000:8000 --restart always $IMAGE_NAME
-            """
-
-            writeFile file: 'deploy.sh', text: deployScript
-            sh 'chmod +x deploy.sh'
-
-            echo "Copying deploy script to server..."
-            sh 'scp -o StrictHostKeyChecking=no deploy.sh root@116.204.251.227:/root/deploy.sh'
-
-            echo "Executing deploy script on server..."
-            sh 'ssh -o StrictHostKeyChecking=no root@116.204.251.227 "bash /root/deploy.sh"'
-        }
-    }
-}
-
-    }
-}
-=======
         stage('Deploy to Server') {
             steps {
                 echo "Preparing deploy script..."
                 script {
-                   withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKERHUB_TOKEN')]) { 
+                    withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKERHUB_TOKEN')]) { 
                         def deployScript = """
                         #!/bin/bash
-                        docker login -u "$DOCKERHUB_USER" --password-stdin <<< "$DOCKERHUB_TOKEN"
-                        docker pull $IMAGE_NAME
+                        export DOCKERHUB_TOKEN="$DOCKERHUB_TOKEN"
+                        echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+                        docker pull $IMAGE_FULL_NAME
                         docker stop weather-api || true
                         docker rm weather-api || true
-                        docker run -d --name weather-api -p 8000:8000 --restart always $IMAGE_NAME
+                        docker run -d --name weather-api -p 8000:8000 --restart always $IMAGE_FULL_NAME
+                        docker system prune -f
                         """
                         writeFile file: 'deploy.sh', text: deployScript
                     }
@@ -83,6 +58,7 @@ pipeline {
 
                 echo "Copying deploy script to server..."
                 sh 'scp -o StrictHostKeyChecking=no deploy.sh root@116.204.251.227:/root/deploy.sh'
+                sh 'ssh -o StrictHostKeyChecking=no root@116.204.251.227 "chmod +x /root/deploy.sh"'
 
                 echo "Executing deploy script on server..."
                 sh 'ssh -o StrictHostKeyChecking=no root@116.204.251.227 "bash /root/deploy.sh"'
@@ -90,4 +66,3 @@ pipeline {
         }
     }
 }
->>>>>>> d7e0363 (update)
