@@ -1,7 +1,7 @@
 import requests
 import os
 import logging
-from .models import WeatherResponse
+from models import WeatherResponse
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
