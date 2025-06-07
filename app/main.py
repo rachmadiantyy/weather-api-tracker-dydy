@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from routes import router  # Import routes from routes.py
-from .config import API_KEY, BASE_URL  # Sesuaikan import sesuai kebutuhan
+from config import API_KEY, BASE_URL  # Sesuaikan import sesuai kebutuhan
 from prometheus_fastapi_instrumentator import Instrumentator  # Tambahkan ini
 
 
