@@ -1,12 +1,7 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'app')))
-
 from fastapi import FastAPI
 from routes import router  # Import routes from routes.py
-from config import API_KEY, BASE_URL  # Sesuaikan import sesuai kebutuhan
 from prometheus_fastapi_instrumentator import Instrumentator  # Tambahkan ini
-
+from config import API_KEY, BASE_URL  # Sesuaikan import sesuai kebutuhan
 
 app = FastAPI()
 # Tambahkan middleware Prometheus untuk monitoring
