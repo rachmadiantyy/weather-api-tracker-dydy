@@ -1,14 +1,8 @@
-FROM python:3.9
-
-WORKDIR /app
-
-COPY requirements.txt /app/
-
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Salin seluruh file aplikasi ke dalam container
-COPY . /app/
-
-# Jalankan aplikasi dengan uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+version: '3.8'
+services:
+  weather-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
