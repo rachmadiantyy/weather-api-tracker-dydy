@@ -34,7 +34,7 @@ try:
     from prometheus_fastapi_instrumentator import Instrumentator
     logger.info("✓ Prometheus imported successfully")
 except ImportError as e:
-    logger.warning(f"⚠ Prometheus not available: {e}")
+    logger.warning(f"Prometheus not available: {e}")
     Instrumentator = None
 
 # Try to import config
@@ -63,11 +63,13 @@ if Instrumentator:
         logger.warning(f"⚠ Prometheus setup failed: {e}")
 
 # Try to import routes
+routes_import_error = None
 try:
     from routes import router
     app.include_router(router)
     logger.info("✓ Routes imported and registered")
 except ImportError as e:
+    routes_import_error = str(e)
     logger.warning(f"⚠ Routes import failed: {e}")
     
     # Fallback route
@@ -76,7 +78,7 @@ except ImportError as e:
         return {
             "error": "Routes module not available",
             "city": city,
-            "message": f"Import error: {str(e)}"
+            "message": f"Import error: {routes_import_error}"
         }
 
 # Basic routes
