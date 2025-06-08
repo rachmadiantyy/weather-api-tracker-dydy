@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from services import get_weather_data  # Ubah dari 'service' ke 'services'
+from service import get_weather_data  # Ubah dari 'service' ke 'services'
 from models import WeatherResponse
 
 router = APIRouter()
