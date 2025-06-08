@@ -6,8 +6,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy semua file aplikasi
-COPY . .
+# Copy semua file dari folder app ke /app di container
+COPY app/ .
 
 # Set environment variables
 ENV PYTHONPATH=/app
@@ -15,5 +15,5 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
-# Run the Python script directly instead of uvicorn
-CMD ["python", "main.py"]
+# Jalankan uvicorn dengan cara yang benar
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
